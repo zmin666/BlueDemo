@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <Button
+        android:id="@+id/tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:text="当前已经打开, 点击关闭通知"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_meg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:text="信息"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv" />
+
+
+    <Button
+        android:id="@+id/tv_write"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:onClick="click_white"
+        android:padding="20dp"
+        android:text="改名字"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_meg" />
+
+    <EditText
+        android:id="@+id/et_write"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:hint="写入的信息"
+        android:padding="20dp"
+        app:layout_constraintLeft_toRightOf="@+id/tv_write"
+        app:layout_constraintTop_toBottomOf="@+id/tv_meg" />
+
+
+    <Button
+        android:id="@+id/tv_write_time"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:onClick="click_white_time"
+        android:padding="20dp"
+        android:text="同步时间"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_write" />
+
+    <Button
+        android:id="@+id/tv_reset_time"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:onClick="click_reset_time"
+        android:padding="20dp"
+        android:text="重置时间"
+        app:layout_constraintLeft_toRightOf="@+id/tv_write_time"
+        app:layout_constraintTop_toBottomOf="@+id/tv_write" />
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:onClick="click_query_time"
+        android:padding="20dp"
+        android:text="查询时间"
+        app:layout_constraintLeft_toRightOf="@+id/tv_reset_time"
+        app:layout_constraintTop_toBottomOf="@+id/tv_write" />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="时间"
+        android:gravity="center"
+        android:textColor="@color/article_edit_title_text"
+        app:layout_constraintTop_toBottomOf="@+id/tv_write_time" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
