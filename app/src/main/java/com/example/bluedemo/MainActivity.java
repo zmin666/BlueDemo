@@ -66,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onDeviceFounded(SearchResult device) {
             //5D:BC:99:BA:15:CE
-//            if (!mData.contains(device) && device.getAddress().contains("CB:43")) {
-            if (!mData.contains(device) && device.getAddress().contains("5D:BC:99:")) {
+            if (!mData.contains(device) && device.getName().contains("ALC")) {
+//            if (!mData.contains(device) ) {
                 mData.add(device);
                 rvAdapter.notifyDataSetChanged();
             }

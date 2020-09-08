@@ -39,6 +39,7 @@ public class CharacterActivity extends AppCompatActivity {
     private TextView tvMeg;
     private Button tvWrite;
     private EditText etText;
+    private EditText etWriteMsg;
     private boolean isOpenNotify = false;
 
 
@@ -50,6 +51,7 @@ public class CharacterActivity extends AppCompatActivity {
         tvMeg = (TextView) findViewById(R.id.tv_meg);
         tvWrite = (Button) findViewById(R.id.tv_write);
         etText = (EditText) findViewById(R.id.et_write);
+        etWriteMsg = (EditText) findViewById(R.id.et_write_msg);
 
         Intent intent = getIntent();
         mMac = intent.getStringExtra("mac");
@@ -209,4 +211,8 @@ public class CharacterActivity extends AppCompatActivity {
     };
 
 
+    public void sendMsg(View view) {
+        String msg = etWriteMsg.getText().toString();
+        BluetoothClientManager.getClient().write(mMac, mService, mCharacter, stringToBytes(msg), mWriteRsp);
+    }
 }

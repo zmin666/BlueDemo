@@ -77,10 +77,28 @@
         android:id="@+id/tv_time"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="时间"
         android:gravity="center"
+        android:text="时间"
         android:textColor="@color/article_edit_title_text"
         app:layout_constraintTop_toBottomOf="@+id/tv_write_time" />
 
+
+    <Button
+        android:id="@+id/bt_send"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:text="发送"
+        android:onClick="sendMsg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_time" />
+
+    <EditText
+        android:id="@+id/et_write_msg"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:text="AA0100AB"
+        android:hint="请填入要上传的数据"
+        app:layout_constraintStart_toEndOf="@+id/bt_send"
+        app:layout_constraintTop_toBottomOf="@+id/tv_time" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
