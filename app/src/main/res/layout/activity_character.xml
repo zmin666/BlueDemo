@@ -87,8 +87,8 @@
         android:id="@+id/bt_send"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="发送"
         android:onClick="sendMsg"
+        android:text="发送"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_time" />
 
@@ -96,9 +96,33 @@
         android:id="@+id/et_write_msg"
         android:layout_width="250dp"
         android:layout_height="50dp"
-        android:text="AA0100AB"
         android:hint="请填入要上传的数据"
+        android:text="0100AB"
         app:layout_constraintStart_toEndOf="@+id/bt_send"
         app:layout_constraintTop_toBottomOf="@+id/tv_time" />
+
+    <TextView
+        android:id="@+id/tv_vertion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bt_send" />
+
+    <TextView
+        android:id="@+id/tv_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_vertion" />
+
+    <TextView
+        android:id="@+id/tv_sport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_phone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

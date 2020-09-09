@@ -2,8 +2,10 @@ package com.example.bluedemo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,8 +19,6 @@ import com.inuker.bluetooth.library.connect.response.BleUnnotifyResponse;
 import com.inuker.bluetooth.library.connect.response.BleWriteResponse;
 import com.inuker.bluetooth.library.utils.ByteUtils;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.UUID;
 
 import static com.inuker.bluetooth.library.Code.REQUEST_SUCCESS;
@@ -35,23 +35,26 @@ public class CharacterActivity extends AppCompatActivity {
     private UUID mCharacter;
     private UUID mNotifyService;
     private UUID mNotifyCharacter;
-    private Button tv;
+    private TextView tvVersion;
+    private TextView tvPhone;
+    private TextView tvSport;
+    private TextView tv;
     private TextView tvMeg;
-    private Button tvWrite;
-    private EditText etText;
-    private EditText etWriteMsg;
+    private EditText etWrite;
     private boolean isOpenNotify = false;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_character);
-        tv = (Button) findViewById(R.id.tv);
+        setContentView(R.layout.activity_character1);
+        tvVersion = (TextView) findViewById(R.id.tv_vertion);
+        tvPhone = (TextView) findViewById(R.id.tv_phone);
+        tvSport = (TextView) findViewById(R.id.tv_sport);
+        tv = (TextView) findViewById(R.id.tv);
         tvMeg = (TextView) findViewById(R.id.tv_meg);
-        tvWrite = (Button) findViewById(R.id.tv_write);
-        etText = (EditText) findViewById(R.id.et_write);
-        etWriteMsg = (EditText) findViewById(R.id.et_write_msg);
+        etWrite = (EditText) findViewById(R.id.et_write);
+        tvMeg.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         Intent intent = getIntent();
         mMac = intent.getStringExtra("mac");
@@ -60,7 +63,7 @@ public class CharacterActivity extends AppCompatActivity {
         mNotifyService = (UUID) intent.getSerializableExtra("notify_service");
         mNotifyCharacter = (UUID) intent.getSerializableExtra("notify_character");
         openNotify();
-        tv.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.tv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isOpenNotify) {
@@ -88,12 +91,17 @@ public class CharacterActivity extends AppCompatActivity {
         BluetoothClientManager.getClient().notify(mMac, mNotifyService, mNotifyCharacter, new BleNotifyResponse() {
             @Override
             public void onNotify(UUID service, UUID character, byte[] value) {
-                tvMeg.setText(ByteUtils.byteToString(value));
+                Log.i(".....收到信息..", "///////");
+                String s = ByteUtils.byteToString(value);
+                String s1 = tvMeg.getText().toString();
+                tvMeg.setText(s1 + "\n" + s);
+                parseNotifyNew(s);
             }
 
             @Override
             public void onResponse(int code) {
                 if (code == REQUEST_SUCCESS) {
+                    isOpenNotify = true;
                     isOpenNotify = true;
                     tv.setText("当前已经打开, 点击关闭通知");
                 }
@@ -103,99 +111,72 @@ public class CharacterActivity extends AppCompatActivity {
 
 
     /**
+     * 解析通知过来的数据
+     * @param s
+     */
+    private void parseNotifyNew(String s) {
+        if (s.startsWith("AA81")) {
+            String validLength = s.substring(4, 6);
+            int length = Integer.parseInt(validLength, 16);
+            String version = s.substring(6, 6 + length * 2);
+            String versionName = version.replace("0", ".");
+            if (versionName.startsWith(".")) {
+                versionName = versionName.substring(1, versionName.length());
+            }
+            tvVersion.setText("版本号为  v" + versionName);
+        } else if (s.startsWith("AA85")) {
+            String validLength = s.substring(4, 6);
+            int length = Integer.parseInt(validLength, 16);
+            int end = 6 + 22;
+            String phoneNumber = s.substring(6, end);
+            String phone = "手机号码:  " + DataUtils.asciiToString(phoneNumber);
+            tvPhone.setText(phone);
+            String paceStr = s.substring(end, end + 4);
+            String pace = "步数:  " + Integer.parseInt(paceStr,16)+"步";
+            String caloriesStr = s.substring(end + 4, end + 8);
+            String calories = "卡路里:  " + Integer.parseInt(caloriesStr,16)+"卡";
+            String distanceStr = s.substring(end + 8, end + 12);
+            String distance = "距离:  " + Integer.parseInt(distanceStr,16)+"米";
+            String temperatureStr = s.substring(end + 12, end + 14);
+            String temperature = "体温:  " + Integer.parseInt(temperatureStr,16)+" 摄氏度";
+            String powerStr = s.substring(end + 14, end + 16);
+            String power = "电量:  " + Integer.parseInt(powerStr,16) + "%";
+
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(pace);
+            stringBuilder.append("\n");
+            stringBuilder.append(calories);
+            stringBuilder.append("\n");
+            stringBuilder.append(distance);
+            stringBuilder.append("\n");
+            stringBuilder.append(temperature);
+            stringBuilder.append("\n");
+            stringBuilder.append(power);
+            tvSport.setText(stringBuilder.toString());
+        }
+    }
+
+
+    /**
      * 写入信息
      * @param view
      */
     public void click_white(View view) {
-        String et = etText.getText().toString();
-        BluetoothClientManager.getClient().write(mMac, mService, mCharacter, stringToAscii("A3", et), mWriteRsp);
+//        String et = etText.getText().toString();
+//        BluetoothClientManager.getClient().write(mMac, mService, mCharacter, DataUtils.stringToAscii("A3", et), mWriteRsp);
     }
 
     public void click_white_time(View view) {
-        BluetoothClientManager.getClient().write(mMac, mService, mCharacter, stringToBytes(getTime()), mWriteRsp);
-}
+        BluetoothClientManager.getClient().write(mMac, mService, mCharacter, DataUtils.getByteTime(), mWriteRsp);
+    }
 
     public void click_query_time(View view) {
-        BluetoothClientManager.getClient().write(mMac, mService, mCharacter, stringToBytes("05"), mWriteRsp);
+        BluetoothClientManager.getClient().write(mMac, mService, mCharacter, DataUtils.stringToBytes("05"), mWriteRsp);
     }
 
     public void click_reset_time(View view) {
         String s = "01202001010100020108";
-        BluetoothClientManager.getClient().write(mMac, mService, mCharacter, stringToBytes(s), mWriteRsp);
-    }
-
-
-    /**
-     * 写入字母之类的信息
-     * @param prefix 服务类型
-     * @param value  服务数据
-     * @return
-     */
-    public static byte[] stringToAscii(String prefix, String value) {
-        StringBuffer sbu = new StringBuffer();
-        sbu.append(prefix);
-        char[] chars = value.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            sbu.append(Integer.toHexString((int) chars[i]));
-        }
-        return ByteUtils.stringToBytes(sbu.toString());
-    }
-
-
-    /**
-     * 写入纯数字信息
-     * @param text
-     * @return
-     */
-    public static byte[] stringToBytes(String text) {
-        int len = text.length();
-        byte[] bytes = new byte[(len + 1) / 2];
-        for (int i = 0; i < len; i += 2) {
-            int size = Math.min(2, len - i);
-            String sub = text.substring(i, i + size);
-            bytes[i / 2] = (byte) Integer.parseInt(sub);
-        }
-        return bytes;
-    }
-
-
-    public String getTime() {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH) + 1;
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        int second = calendar.get(Calendar.SECOND);
-        int yy1 = year / 100;
-        int yy2 = year - yy1 * 100;
-        StringBuffer sbu = new StringBuffer();
-        sbu.append("01");
-        sbu.append(yy1);
-        sbu.append(yy2);
-        if (month < 10) {
-            sbu.append("0");
-        }
-        sbu.append(month);
-        if (day < 10) {
-            sbu.append("0");
-        }
-        sbu.append(day);
-        if (hour < 10) {
-            sbu.append("0");
-        }
-        sbu.append(hour);
-        if (minute < 10) {
-            sbu.append("0");
-        }
-        sbu.append(minute);
-        if (second < 10) {
-            sbu.append("0");
-        }
-        sbu.append(second);
-        sbu.append("07");
-        sbu.append("19");
-        return sbu.toString();
+        BluetoothClientManager.getClient().write(mMac, mService, mCharacter, DataUtils.stringToBytes(s), mWriteRsp);
     }
 
 
@@ -212,7 +193,29 @@ public class CharacterActivity extends AppCompatActivity {
 
 
     public void sendMsg(View view) {
-        String msg = etWriteMsg.getText().toString();
-        BluetoothClientManager.getClient().write(mMac, mService, mCharacter, stringToBytes(msg), mWriteRsp);
+        sendMsgForVersion("AA0500AF");
+    }
+
+
+    public void getVersion(View view) {
+        sendMsgForVersion("AA0100AB");
+    }
+
+    public void sendMsgForVersion(String s) {
+        BluetoothClientManager.getClient().write(mMac, mService, mCharacter, DataUtils.hexStringToByteArray(s), mWriteRsp);
+    }
+
+    public void clear(View view) {
+        tvMeg.setText("通知信息log");
+    }
+
+    public void sendCommand(View view) {
+        String trim = etWrite.getText().toString().trim();
+        if (TextUtils.isEmpty(trim)) {
+            Toast.makeText(this, "请输入指令", Toast.LENGTH_SHORT).show();
+        }else{
+            sendMsgForVersion(trim);
+        }
+
     }
 }
